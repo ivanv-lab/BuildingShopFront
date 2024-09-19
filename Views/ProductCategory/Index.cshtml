@@ -1,0 +1,19 @@
+﻿@model IEnumerable<ProductCategory>
+@{
+    string name = "";
+}
+
+<form method="post" class="form-control row g-3" asp-controller="ProductCategory"
+      asp-action="Add">
+    <div class="col-auto">
+        <label>Наименование категории</label>
+    </div>
+    <div class="col-auto">
+        <input type="text" class="form-control" asp-for="@name" />
+    </div>
+    <div class="col-auto">
+        <input type="submit" class="btn btn-primary mb-3" value="Добавить" />
+    </div>
+</form>
+
+<partial name="_CategoriesTable" />
