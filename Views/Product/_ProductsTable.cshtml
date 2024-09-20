@@ -1,0 +1,40 @@
+﻿@{
+    string name = "";
+}
+
+<table class="table table-hover" id="productsTable">
+    <thead>
+        <tr>
+            <th scope="col">
+                Номер
+            </th>
+            <th scope="col">
+                Наименование
+            </th>
+            <th scope="col">
+                Количество
+            </th>
+            <th scope="col">
+                Категория
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    @foreach(var item in Model)
+    {
+        <tr>
+            <td scope="row">
+                @item.Id
+            </td>
+            <td scope="row">
+                @item.Name
+            </td>
+            <td scope="row">
+                @item.Count
+            </td>
+            <td scope="row">
+                @item.Category.Name
+            </td>
+        </tr>
+    }
+</table>

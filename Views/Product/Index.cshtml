@@ -1,0 +1,18 @@
+﻿@model IEnumerable<BuildingShopFront.Models.Product>
+@{
+    string name = "";
+    int count = 0;
+}
+
+<form method="post" class="form-control row g-3" asp-controller="Product"
+    asp-action="Add">
+    <div class="col-auto">
+        <input type="text" class="form-control" placeholder="Наименование товара"
+        asp-for="@name" />
+        <input type="text" class="form-control" placeholder="Количество на складе"
+        asp-for="@count" />
+        <select class="form-control"></select>
+    </div>
+</form>
+
+<partial name="_ProductsTable"/>
