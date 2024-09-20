@@ -1,15 +1,20 @@
-﻿<table class="table table-hover" id="categoriesTable">
+﻿@{
+    string name = "";
+}
+
+<table class="table table-hover" id="categoriesTable">
     <thead>
-    <tr>
-        <th scope="col">
-            Номер
-        </th>
-        <th scope="col">
-            Наименование
-        </th>
-    </tr>
-</thead>
-    @foreach(var item in Model)
+        <tr>
+            <th scope="col">
+                Номер
+            </th>
+            <th scope="col">
+                Наименование
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
     {
         <tr>
             <td scope="row">
@@ -17,6 +22,25 @@
             </td>
             <td scope="row">
                 @item.Name
+            </td>
+            <td scope="row">
+                <div class="dropdown">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                        Изменить
+                    </button>
+                    <form class="dropdown-menu p-4" asp-controller="ProductCategory">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" asp-for="@name" placeholder="Наименование">
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" 
+                            asp-action="Update" asp-route-id="@item.Id">Сохранить</button>
+                            <div class="dropdown-divider"></div>
+                            <a class="btn btn-primary" asp-controller="ProductCategory"
+                               asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                        </div>
+                    </form>
+                </div>
             </td>
         </tr>
     }

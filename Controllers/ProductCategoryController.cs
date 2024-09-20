@@ -20,12 +20,31 @@ namespace BuildingShopFront.Controllers
                 <List<ProductCategory>>(content);
             return View(data);
         }
+        [HttpPost]
         public async Task<IActionResult> Add(string name)
         {
-            var content = new StringContent(name);
+            var requestData = new { name = name };
+            var content = JsonContent.Create(requestData);
             var response = await _httpClient.PostAsync
                 ("api/ProductCategory", content);
             response.EnsureSuccessStatusCode();
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<IActionResult> Update(long id,string name)
+        {
+            var requestData = new { id=id,name = name };
+            var content=JsonContent.Create(requestData);
+            var response = await _httpClient.PutAsync
+                ("api/ProductCategory", content);
+            response.EnsureSuccessStatusCode();
+            return RedirectToAction("Index");
+        }
+        public async Task<IActionResult> Delete(long id)
+        {
+            var response = await _httpClient.DeleteAsync
+                ($"api/ProductCategory/{id}");
+            response?.EnsureSuccessStatusCode();
             return RedirectToAction("Index");
         }
     }
