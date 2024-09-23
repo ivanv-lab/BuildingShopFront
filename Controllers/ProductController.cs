@@ -1,5 +1,6 @@
 ﻿using BuildingShopFront.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 
 namespace BuildingShopFront.Controllers
@@ -17,8 +18,19 @@ namespace BuildingShopFront.Controllers
             response.EnsureSuccessStatusCode();
             var content=await response.Content.ReadAsStringAsync();
             var data=JsonConvert.DeserializeObject
-                <List<ProductController>>(content);
+                <List<Product>>(content);
+            await LoadCategories();
             return View(data);
+        }
+        
+        public async Task LoadCategories()
+        {
+            var response = await _httpClient.GetAsync("api/ProductCategory");
+            response.EnsureSuccessStatusCode();
+            var content=await response.Content.ReadAsStringAsync();
+            var data = JsonConvert.DeserializeObject
+                <List<ProductCategory>>(content);
+            ViewBag.Categories = new SelectList(data, "Id", "Name");
         }
     }
 }

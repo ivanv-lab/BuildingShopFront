@@ -1,7 +1,20 @@
-﻿@model IEnumerable<BuildingShopFront.Models.Product>
+﻿@model IEnumerable<Product>
 @{
-    string name = "";
-    int count = 0;
+    string name="";
+    int count=0;
+    string category = "";
+    // List<SelectListItem> categories = new List<SelectListItem>();
+    // categories.AddRange
+    // (new SelectList(Model
+    //     .Select(m => m.Category.Name)
+    //     .Distinct()
+    //     .ToList()));
+    
+    // foreach(var item in Model)
+    // {
+    //     categories.Add(new SelectListItem { Value = item.Category.Name,
+    //     Text=item.Category.Name});
+    // }
 }
 
 <form method="post" class="form-control row g-3" asp-controller="Product"
@@ -9,10 +22,19 @@
     <div class="col-auto">
         <input type="text" class="form-control" placeholder="Наименование товара"
         asp-for="@name" />
+    </div>
+    <div class="col-auto">
+        <label>Количество на складе</label>
         <input type="text" class="form-control" placeholder="Количество на складе"
         asp-for="@count" />
-        <select class="form-control"></select>
+    </div>
+        <div class="col-auto">
+         <label>Категория</label>
+        <select asp-for="@category" asp-items="ViewBag.Categories" class="form-control"></select>
+    </div>
+    <div class="d-grid gap-2">
+        <input type="submit" class="btn btn-primary mb-3" value="Добавить" />
     </div>
 </form>
 
-<partial name="_ProductsTable"/>
+<partial name="_ProductsTable" />
