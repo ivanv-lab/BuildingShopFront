@@ -5,11 +5,17 @@
 
 <form method="post" class="form-control row g-3" asp-controller="ProductCategory"
       asp-action="Add">
-    <div class="col-auto">
+    <div class="mb-3">
         <input type="text" class="form-control" placeholder="Наименование категории" asp-for="@name" />
     </div>
     <div class="d-grid gap-2">
         <input type="submit" class="btn btn-primary mb-3" value="Добавить" />
+    </div>
+</form>
+<br />
+<form method="get" class="form-control row g-3">
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Поиск" />
     </div>
 </form>
 
