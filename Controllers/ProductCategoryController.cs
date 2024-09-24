@@ -23,21 +23,27 @@ namespace BuildingShopFront.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(string name)
         {
-            var requestData = new { name = name };
-            var content = JsonContent.Create(requestData);
-            var response = await _httpClient.PostAsync
-                ("api/ProductCategory", content);
-            response.EnsureSuccessStatusCode();
+            if (!string.IsNullOrEmpty(name))
+            {
+                var requestData = new { name = name };
+                var content = JsonContent.Create(requestData);
+                var response = await _httpClient.PostAsync
+                    ("api/ProductCategory", content);
+                response.EnsureSuccessStatusCode();
+            }
             return RedirectToAction("Index");
         }
         [HttpPost]
         public async Task<IActionResult> Update(long id,string name)
         {
-            var requestData = new { id=id,name = name };
-            var content=JsonContent.Create(requestData);
-            var response = await _httpClient.PutAsync
-                ("api/ProductCategory", content);
-            response.EnsureSuccessStatusCode();
+            if (!string.IsNullOrEmpty(name))
+            {
+                var requestData = new { id = id, name = name };
+                var content = JsonContent.Create(requestData);
+                var response = await _httpClient.PutAsync
+                    ("api/ProductCategory", content);
+                response.EnsureSuccessStatusCode();
+            }
             return RedirectToAction("Index");
         }
         public async Task<IActionResult> Delete(long id)

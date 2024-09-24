@@ -32,5 +32,52 @@ namespace BuildingShopFront.Controllers
                 <List<ProductCategory>>(content);
             ViewBag.Categories = new SelectList(data, "Id", "Name");
         }
+        
+        public async Task<IActionResult> Add(string name,
+            int count, int categoryId)
+        {
+            if (!string.IsNullOrEmpty(name) && count > 0 && categoryId > 0)
+            {
+                var requestData = new
+                {
+                    name = name,
+                    count = count,
+                    categoryId = categoryId
+                };
+                var content = JsonContent.Create(requestData);
+                var response = await _httpClient.PostAsync
+                    ("api/Product", content);
+                response.EnsureSuccessStatusCode();
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Update(long id,string name,
+            int count, int categoryId)
+        {
+            if (!string.IsNullOrEmpty(name) && count > 0 && categoryId > 0)
+            {
+                var requestData = new
+                {
+                    id = id,
+                    name = name,
+                    count = count,
+                    categoryId = categoryId
+                };
+                var content = JsonContent.Create(requestData);
+                var response = await _httpClient.PutAsync
+                    ("api/Product", content);
+                response.EnsureSuccessStatusCode();
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Delete(long id)
+        {
+            var response = await _httpClient.DeleteAsync
+                ($"api/Product/{id}");
+            response.EnsureSuccessStatusCode();
+            return RedirectToAction("Index");
+        }
     }
 }
