@@ -28,9 +28,10 @@
                     <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                         Изменить
                     </button>
-                    <form class="dropdown-menu p-4" asp-controller="ProductCategory">
-                        <div class="mb-3">
-                            <input type="text" class="form-control" asp-for="@name" placeholder="Наименование">
+                    <form class="dropdown-menu p-2" asp-controller="ProductCategory">
+                        <div class="mb-3 form-floating">
+                            <input type="text" id="pcNewName" class="form-control" asp-for="@name" placeholder="Наименование">
+                            <label for="pcNewName">Наименование</label>
                         </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary" 

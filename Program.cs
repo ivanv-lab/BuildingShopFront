@@ -11,7 +11,7 @@ namespace BuildingShopFront
             builder.Services.AddScoped(sp =>
             new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:5034")
+                BaseAddress = new Uri("http://localhost:5200")
             });
 
             var app = builder.Build();

@@ -1,6 +1,8 @@
 ﻿using BuildingShopFront.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 namespace BuildingShopFront.Controllers
 {
@@ -13,25 +15,28 @@ namespace BuildingShopFront.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            return View(await GetData());
+        }
+        private async Task<Object> GetData()
+        {
             var response = await _httpClient.GetAsync("api/ProductCategory");
             response.EnsureSuccessStatusCode();
-            var content=await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync();
             var data = JsonConvert.DeserializeObject
                 <List<ProductCategory>>(content);
-            return View(data);
+            return data;
         }
-        [HttpPost]
-        public async Task<IActionResult> Add(string name)
+        public async Task<object> Add(string name)
         {
             if (!string.IsNullOrEmpty(name))
             {
                 var requestData = new { name = name };
-                var content = JsonContent.Create(requestData);
-                var response = await _httpClient.PostAsync
-                    ("api/ProductCategory", content);
-                response.EnsureSuccessStatusCode();
+                var content1 = JsonContent.Create(requestData);
+                var response1 = await _httpClient.PostAsync
+                    ("api/ProductCategory", content1);
+                response1.EnsureSuccessStatusCode();
             }
-            return RedirectToAction("Index");
+            return PartialView("_CategoriesTable",await GetData());
         }
         [HttpPost]
         public async Task<IActionResult> Update(long id,string name)

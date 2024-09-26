@@ -14,15 +14,18 @@ namespace BuildingShopFront.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var response =await _httpClient.GetAsync("api/Product");
-            response.EnsureSuccessStatusCode();
-            var content=await response.Content.ReadAsStringAsync();
-            var data=JsonConvert.DeserializeObject
-                <List<Product>>(content);
             await LoadCategories();
-            return View(data);
+            return View(await GetData());
         }
-        
+        private async Task<object> GetData()
+        {
+            var response = await _httpClient.GetAsync("api/Product");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            var data = JsonConvert.DeserializeObject
+                <List<Product>>(content);
+            return data;
+        }
         public async Task LoadCategories()
         {
             var response = await _httpClient.GetAsync("api/ProductCategory");
@@ -49,7 +52,7 @@ namespace BuildingShopFront.Controllers
                     ("api/Product", content);
                 response.EnsureSuccessStatusCode();
             }
-            return RedirectToAction("Index");
+            return PartialView("_ProductsTable", await GetData());
         }
 
         public async Task<IActionResult> Update(long id,string name,

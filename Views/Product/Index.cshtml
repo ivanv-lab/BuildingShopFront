@@ -5,26 +5,26 @@
     int categoryId = 0;
 }
 
-<form method="post" class="form-control row g-3" asp-controller="Product"
-    asp-action="Add">
+<form method="post" class="form-control row g-3">
     <div class="col-auto form-floating">
-        <input type="text" class="form-control" id="pName" placeholder="Наименование товара"
-        asp-for="@name" />
+        <input type="text" class="form-control" id="pName" placeholder="Наименование товара"/>
         <label for="pName">Наименование товара</label>
     </div>
     <div class="col-auto form-floating">
-        <input type="text" class="form-control" id="pCount" placeholder="Количество на складе"
-        asp-for="@count" />
+        <input type="text" class="form-control" id="pCount" placeholder="Количество на складе"/>
         <label for="pCount">Количество на складе</label>
     </div>
     <div class="mb-3">
          <label>Категория</label>
-        <select asp-for="@categoryId" asp-items="ViewBag.Categories" 
+        <select itemid="categoryId" id="categorySelect" asp-items="ViewBag.Categories" 
         class="form-control"></select>
     </div>
     <div class="d-grid gap-2">
-        <input type="submit" class="btn btn-primary mb-3" value="Добавить" />
-    </div>
+@*         <input type="submit" class="btn btn-primary mb-3" value="Добавить" />*@    
+    <button type="button" class="btn btn-primary mb-3" id="addButton">
+        Добавить
+    </button>
+</div>
 </form>
 <br />
 <form method="get" class="form-control row g-3">
@@ -33,4 +33,27 @@
     </div>
 </form> 
 
+<div id="productList">
 <partial name="_ProductsTable" />
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        $('#addButton').click(function () {
+            const name = $('#pName').val();
+            const count = $('#pCount').val();
+            const categoryId = $('#categorySelect').val();
+            $.ajax({
+                url: '@Url.Action("Add", "Product")',
+                type: 'POST',
+                data: { name: name,count:count,categoryId:categoryId },
+                success: function (data) {
+                    $('#productList').html(data);
+                    $('#pName').val('');
+                    $('#pCount').val('');
+                }
+            });
+        });
+    });
+</script>

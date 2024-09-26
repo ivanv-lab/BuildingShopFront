@@ -3,13 +3,15 @@
     string name = "";
 }
 
-<form method="post" class="form-control row g-3" asp-controller="ProductCategory"
-      asp-action="Add">
-    <div class="mb-3">
-        <input type="text" class="form-control" placeholder="Наименование категории" asp-for="@name" />
+<form method="post" class="form-control row g-3" id="postProdCatForm">
+    <div class="col-auto form-floating">
+        <input type="text" class="form-control" id="pcName" placeholder="Наименование категории"/>
+        <label for="pcName">Наименование категории</label>
     </div>
     <div class="d-grid gap-2">
-        <input type="submit" class="btn btn-primary mb-3" value="Добавить" />
+        <button type="button" class="btn btn-primary mb-3" id="addButton">
+            Добавить
+        </button>
     </div>
 </form>
 <br />
@@ -19,4 +21,24 @@
     </div>
 </form>
 
-<partial name="_CategoriesTable" />
+<div id="categoryList">
+    <partial name="_CategoriesTable" />
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        $('#addButton').click(function () {
+            const name = $('#pcName').val();
+            $.ajax({
+                url: '@Url.Action("Add","ProductCategory")',
+                type: 'POST',
+                data: { name: name },
+                success: function (data) {
+                    $('#categoryList').html(data);
+                    $('#pcName').val('');
+                }
+            });
+        });
+    });
+</script>
