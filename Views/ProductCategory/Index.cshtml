@@ -17,13 +17,23 @@
 <br />
 <form method="get" class="form-control row g-3">
     <div class="mb-3">
-        <input type="text" class="form-control" placeholder="Поиск" />
+        <input type="text" id="searchInput" oninput="searchFunc()" class="form-control" placeholder="Поиск" />
     </div>
 </form>
 
 <div id="categoryList">
     <partial name="_CategoriesTable" />
 </div>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @for (int i = 1; i <= ViewBag.TotalPages.Value; i++)
+        {
+            <li class="page-item"><button class="page-link" 
+            onclick="changePage(@i)" value="@i">@i</button></li>
+        }
+    </ul>
+</nav>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script>
@@ -41,4 +51,27 @@
             });
         });
     });
+
+    function searchFunc() {
+        let searchString = $("#searchInput").val();
+        $.ajax({
+            url: '@Url.Action("Search", "ProductCategory")',
+            type: 'GET',
+            data: { searchString: searchString },
+            success: function (data) {
+                $('#categoryList').html(data);
+            }
+        });
+    }
+
+    function changePage(pageNumber) {
+        $.ajax({
+            url: '@Url.Action("Search", "ProductCategory")',
+            type: 'GET',
+            data: { page:pageNumber },
+            success: function (data) {
+                $('#categoryList').html(data);
+            }
+        });
+    }
 </script>

@@ -1,41 +1,55 @@
 ﻿@model IEnumerable<Product>
 @{
-    string name="";
-    string count="";
+    string name = "";
+    string count = "";
     int categoryId = 0;
 }
 
 <form method="post" class="form-control row g-3">
     <div class="col-auto form-floating">
-        <input type="text" class="form-control" id="pName" placeholder="Наименование товара"/>
+        <input type="text" class="form-control" id="pName" placeholder="Наименование товара" />
         <label for="pName">Наименование товара</label>
     </div>
     <div class="col-auto form-floating">
-        <input type="text" class="form-control" id="pCount" placeholder="Количество на складе"/>
+        <input type="text" class="form-control" id="pCount" placeholder="Количество на складе" />
         <label for="pCount">Количество на складе</label>
     </div>
     <div class="mb-3">
-         <label>Категория</label>
-        <select itemid="categoryId" id="categorySelect" asp-items="ViewBag.Categories" 
-        class="form-control"></select>
+        <label>Категория</label>
+        <select itemid="categoryId" id="categorySelect" asp-items="ViewBag.Categories"
+                class="form-control"></select>
     </div>
     <div class="d-grid gap-2">
-@*         <input type="submit" class="btn btn-primary mb-3" value="Добавить" />*@    
-    <button type="button" class="btn btn-primary mb-3" id="addButton">
-        Добавить
-    </button>
-</div>
+        @*         <input type="submit" class="btn btn-primary mb-3" value="Добавить" />*@
+        <button type="button" class="btn btn-primary mb-3" id="addButton">
+            Добавить
+        </button>
+    </div>
 </form>
 <br />
 <form method="get" class="form-control row g-3">
     <div class="mb-3">
-        <input type="text" class="form-control" placeholder="Поиск" />
+        <input type="text" id="searchInput" oninput="searchFunc()" class="form-control" placeholder="Поиск" />
     </div>
-</form> 
+</form>
 
 <div id="productList">
-<partial name="_ProductsTable" />
+    <partial name="_ProductsTable" />
 </div>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @for (int i = 1; i <= ViewBag.TotalPages.Value; i++)
+        {
+            <li class="page-item">
+                <button class="page-link"
+                        onclick="changePage(@i)" value="@i">
+                    @i
+                </button>
+            </li>
+        }
+    </ul>
+</nav>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script>
@@ -47,7 +61,7 @@
             $.ajax({
                 url: '@Url.Action("Add", "Product")',
                 type: 'POST',
-                data: { name: name,count:count,categoryId:categoryId },
+                data: { name: name, count: count, categoryId: categoryId },
                 success: function (data) {
                     $('#productList').html(data);
                     $('#pName').val('');
@@ -56,4 +70,27 @@
             });
         });
     });
+
+    function searchFunc() {
+        let searchString = $("#searchInput").val();
+        $.ajax({
+            url: '@Url.Action("Search", "Product")',
+            type: 'GET',
+            data: { searchString: searchString },
+            success: function (data) {
+                $('#productList').html(data);
+            }
+        });
+    }
+
+    function changePage(pageNumber) {
+        $.ajax({
+            url: '@Url.Action("Search", "Product")',
+            type: 'GET',
+            data: { page: pageNumber },
+            success: function (data) {
+                $('#productList').html(data);
+            }
+        });
+    }
 </script>

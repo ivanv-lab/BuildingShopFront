@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BuildingShopFront.Controllers
 {
@@ -12,19 +13,43 @@ namespace BuildingShopFront.Controllers
         {
             _httpClient = httpClient;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page=1)
         {
             await LoadCategories();
-            return View(await GetData());
+            return View(await GetData("","",page));
         }
-        private async Task<object> GetData()
+        public async Task<IActionResult> Search(string? sortOrder,
+            string? searchString, int page = 1)
         {
-            var response = await _httpClient.GetAsync("api/Product");
+            return PartialView("_ProductsTable",
+                await GetData("", searchString, page));
+        }
+        private async Task<object> GetData(
+            string? sortOrder, string? searchString, int page = 1)
+        {
+            //var response = await _httpClient.GetAsync("api/Product");
+            //response.EnsureSuccessStatusCode();
+            //var content = await response.Content.ReadAsStringAsync();
+            //var data = JsonConvert.DeserializeObject
+            //    <List<Product>>(content);
+            //return data;
+            var response = await _httpClient
+                .GetAsync("api/Product/sort" +
+                $"?sortOrder={sortOrder}&searchString={searchString}&page={page}");
             response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            var data = JsonConvert.DeserializeObject
-                <List<Product>>(content);
-            return data;
+            var content=await response.Content.ReadAsStringAsync();
+            JObject json= JObject.Parse(content);
+            List<Product> products = new List<Product>();
+            foreach (var item in json["items"])
+            {
+                products.Add(JsonConvert.DeserializeObject
+                    <Product>(item.ToString()));
+            }
+            ViewBag.CurrentPage = json["currentPage"];
+            ViewBag.TotalPages = json["totalPages"];
+            ViewBag.TotalCount = json["totalCount"];
+            await LoadCategories();
+            return products;
         }
         public async Task LoadCategories()
         {
@@ -52,7 +77,7 @@ namespace BuildingShopFront.Controllers
                     ("api/Product", content);
                 response.EnsureSuccessStatusCode();
             }
-            return PartialView("_ProductsTable", await GetData());
+            return PartialView("_ProductsTable", await GetData("",""));
         }
 
         public async Task<IActionResult> Update(long id,string name,

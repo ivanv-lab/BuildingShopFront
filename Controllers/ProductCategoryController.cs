@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Diagnostics.Eventing.Reader;
 using System.Text.Json.Nodes;
 
 namespace BuildingShopFront.Controllers
@@ -13,18 +14,35 @@ namespace BuildingShopFront.Controllers
         {
             _httpClient = httpClient;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchString,
+            int page=1)
         {
-            return View(await GetData());
+            return View(await GetData("","",page));
         }
-        private async Task<Object> GetData()
+        public async Task<IActionResult> Search(string? searchString,
+            int page = 1)
         {
-            var response = await _httpClient.GetAsync("api/ProductCategory");
+            return PartialView("_CategoriesTable", await GetData("", searchString, page));
+        }
+        private async Task<Object> GetData(
+            string? sortOrder, string? searchString, int page=1)
+        {
+            var response = await _httpClient
+                .GetAsync("api/ProductCategory/sort" +
+                $"?sortOrder={sortOrder}&searchString={searchString}&page={page}");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
-            var data = JsonConvert.DeserializeObject
-                <List<ProductCategory>>(content);
-            return data;
+            JObject json = JObject.Parse(content);
+            List<ProductCategory> categories = new List<ProductCategory>();
+            foreach (var item in json["items"])
+            {
+                categories.Add(JsonConvert.DeserializeObject
+                    <ProductCategory>(item.ToString()));
+            }
+            ViewBag.CurrentPage = json["currentPage"];
+            ViewBag.TotalPages = json["totalPages"];
+            ViewBag.TotalCount = json["totalCount"];
+            return categories;
         }
         public async Task<object> Add(string name)
         {
@@ -36,7 +54,7 @@ namespace BuildingShopFront.Controllers
                     ("api/ProductCategory", content1);
                 response1.EnsureSuccessStatusCode();
             }
-            return PartialView("_CategoriesTable",await GetData());
+            return PartialView("_CategoriesTable",await GetData("", ""));
         }
         [HttpPost]
         public async Task<IActionResult> Update(long id,string name)
